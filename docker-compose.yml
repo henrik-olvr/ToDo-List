@@ -1,0 +1,30 @@
+version: "3.1"
+
+services:
+
+  db:
+    image: postgres:15.3-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: todolist
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: senha
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init-scripts:/docker-entrypoint-initdb.d
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    environment:
+      POSTGRES_DB: todolist
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: senha
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/todolist
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
